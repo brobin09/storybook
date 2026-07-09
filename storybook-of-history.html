@@ -187,6 +187,7 @@
     font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;font-size:1.02rem;
     background:var(--pine);color:var(--calico-2);border:none;border-radius:999px;
     padding:.62rem 1.25rem;cursor:pointer;min-height:48px;
+    min-width:158px;justify-content:center;
     box-shadow:0 3px 0 var(--pine-deep);
     transition:transform .12s ease;
   }
@@ -2300,21 +2301,55 @@ function markVisited(k){
 
 /* --- audio priority: recorded file first (mp3, then m4a), browser voice last --- */
 let speechUtterance = null;
+
+/* the listen button cycles: idle -> playing -> paused -> playing ... */
+function setListenBtn(state){         // 'idle' | 'playing' | 'paused'
+  const b = $('listenBtn');
+  b.dataset.state = state;
+  if(state === 'playing'){
+    b.textContent = '\u23F8 Pause';
+    b.setAttribute('aria-label','Pause the narration');
+  } else if(state === 'paused'){
+    b.textContent = '\u25B6 Resume';
+    b.setAttribute('aria-label','Resume the narration');
+  } else {
+    b.textContent = '\uD83D\uDD0A Read to me';
+    b.setAttribute('aria-label','Read this story aloud');
+  }
+}
+
 function stopAllAudio(){
   if(window.speechSynthesis) speechSynthesis.cancel();
   if(window._sbAudio){ window._sbAudio.pause(); window._sbAudio = null; }
+  setListenBtn('idle');
 }
+
+function pauseNarration(){
+  if(window._sbAudio){ window._sbAudio.pause(); }
+  else if(window.speechSynthesis && speechSynthesis.speaking){ speechSynthesis.pause(); }
+  setListenBtn('paused');
+}
+
+function resumeNarration(){
+  if(window._sbAudio){ window._sbAudio.play(); }
+  else if(window.speechSynthesis && speechSynthesis.paused){ speechSynthesis.resume(); }
+  setListenBtn('playing');
+}
+
 function playNarration(entry, key){
   stopAllAudio();
+  setListenBtn('playing');            // optimistic; reset below if nothing can play
   const trySrc = (srcs, i=0) => {
     if(i >= srcs.length){
       if('speechSynthesis' in window){
         speechUtterance = new SpeechSynthesisUtterance(`${entry.title}. ${entry.tale}`);
         speechUtterance.rate = 0.92;
+        speechUtterance.onend = () => setListenBtn('idle');
         speechSynthesis.speak(speechUtterance);
         $('voiceCredit').textContent = 'Robot reader (a real voice is coming soon)';
       } else {
         $('voiceCredit').textContent = 'Read-aloud isn\u2019t available on this device';
+        setListenBtn('idle');
       }
       return;
     }
@@ -2322,12 +2357,21 @@ function playNarration(entry, key){
     audio.addEventListener('canplaythrough', () => {
       window._sbAudio = audio;
       audio.play();
+      setListenBtn('playing');
       $('voiceCredit').textContent = entry.voice ? `Read by ${entry.voice}` : 'Recorded narration';
     }, { once:true });
+    audio.addEventListener('ended', () => { window._sbAudio = null; setListenBtn('idle'); }, { once:true });
     audio.addEventListener('error', () => trySrc(srcs, i+1), { once:true });
     audio.load();
   };
   trySrc([`audio/${key}.mp3`, `audio/${key}.m4a`]);
+}
+
+function toggleNarration(){
+  const state = $('listenBtn').dataset.state || 'idle';
+  if(state === 'playing') pauseNarration();
+  else if(state === 'paused') resumeNarration();
+  else playNarration(LIBRARY[slug()], slug());
 }
 
 /* --- render a story --- */
@@ -2459,7 +2503,7 @@ $('factFlap').addEventListener('click', function(){
 });
 $('prevBtn').addEventListener('click', ()=>step(-1));
 $('nextBtn').addEventListener('click', ()=>step(1));
-$('listenBtn').addEventListener('click', ()=> playNarration(LIBRARY[slug()], slug()));
+$('listenBtn').addEventListener('click', toggleNarration);
 document.addEventListener('keydown', e => {
   if(document.querySelector('dialog[open]')) return;
   if(e.key === 'ArrowLeft') step(-1);
