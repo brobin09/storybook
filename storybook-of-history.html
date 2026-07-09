@@ -5,279 +5,415 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Storybook of History</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..600,0..100,0..1&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
+  /* ============================================================
+     THE STORYBOOK OF HISTORY — "Story Quilt" visual identity
+     Design only. Every class/id hook the render logic uses is
+     preserved; only the look changes.
+     ============================================================ */
   :root{
-    --night:#252A54;        /* deep twilight sky */
-    --night-deep:#1B1F42;
-    --page:#FFF8EC;         /* storybook paper */
-    --page-edge:#F0E4CC;
-    --ink:#3A3350;          /* warm dark ink */
-    --lantern:#F5C04E;      /* butter gold */
-    --coral:#E96A5C;        /* warm coral */
-    --sage:#7FA98C;         /* soft green */
-    --sky-blue:#8FB8D8;
+    --ink:#2C2318;          /* dark walnut text            */
+    --ink-soft:#5E4E3A;     /* secondary text              */
+    --calico:#F7EFDC;       /* the quilt-block cloth (page)*/
+    --calico-2:#FCF7EA;     /* lightest cloth              */
+    --calico-edge:#E7DABE;
+    --indigo:#324272;       /* dyed indigo (sashing)       */
+    --indigo-deep:#233158;
+    --indigo-ink:#1C2748;
+    --brick:#B04A36;        /* clay / brick                */
+    --brick-deep:#8F3A2A;
+    --ochre:#DCA033;        /* gold thread                 */
+    --ochre-deep:#BC8324;
+    --pine:#497059;         /* forest patch                */
+    --pine-deep:#365441;
+    --plum:#7C4A63;         /* virtue patch                */
+    --plum-deep:#603850;
+    --thread:#F3E6C4;       /* highlight stitch            */
+    --shadow:0 18px 42px rgba(18,24,48,.42);
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html{font-size:17px}
+  html{font-size:17px;-webkit-text-size-adjust:100%}
   body{
-    font-family:'Atkinson Hyperlegible',sans-serif;
-    background:linear-gradient(180deg,var(--night-deep) 0%,var(--night) 55%,#33396B 100%);
+    font-family:'Atkinson Hyperlegible',system-ui,sans-serif;
     color:var(--ink);
     min-height:100vh;
     display:flex;flex-direction:column;align-items:center;
-    padding:1.2rem 1rem 3rem;
+    padding:1.4rem 1rem 3.4rem;
     overflow-x:hidden;
+    background-color:var(--indigo-deep);
+    background-image:
+      repeating-linear-gradient(45deg, rgba(220,160,51,.055) 0 1px, transparent 1px 27px),
+      repeating-linear-gradient(-45deg, rgba(220,160,51,.055) 0 1px, transparent 1px 27px),
+      radial-gradient(1100px 560px at 50% -14%, rgba(220,160,51,.12), transparent 68%),
+      linear-gradient(180deg,var(--indigo-ink) 0%,var(--indigo-deep) 52%,#28365F 100%);
+    background-attachment:fixed;
   }
-  /* twinkling stars in the sky background */
-  .stars{position:fixed;inset:0;pointer-events:none;z-index:0}
-  .stars circle{animation:twinkle 3s ease-in-out infinite}
-  @keyframes twinkle{0%,100%{opacity:.25}50%{opacity:.9}}
+  /* the old starfield is retired for the quilt ground */
+  .stars{display:none}
+
   @media (prefers-reduced-motion:reduce){
-    .stars circle{animation:none;opacity:.5}
+    *{animation:none!important}
     .page-card{transition:none!important}
   }
+  ::selection{background:var(--ochre);color:var(--ink)}
 
-  header{position:relative;z-index:1;text-align:center;color:var(--page);margin-bottom:1rem}
-  header h1{
-    font-family:'Fredoka',sans-serif;font-weight:700;
-    font-size:clamp(1.7rem,5vw,2.4rem);letter-spacing:.5px;
-    color:var(--lantern);text-shadow:0 2px 0 rgba(0,0,0,.25);
+  /* ---------- reusable quilt trims ---------- */
+  /* a pieced sawtooth (flying-geese) strip */
+  .geese-strip{
+    height:11px;flex:0 0 auto;
+    background:
+      linear-gradient(45deg,  var(--ochre) 48%, transparent 50%) 0 0/18px 100%,
+      linear-gradient(-45deg, var(--ochre) 48%, transparent 50%) 9px 0/18px 100%;
+    background-color:var(--brick-deep);
   }
-  header .subtitle{font-size:.95rem;opacity:.85;margin-top:.15rem}
 
-  /* the book */
+  /* ---------- masthead ---------- */
+  header{position:relative;z-index:1;text-align:center;margin-bottom:1.2rem;max-width:680px}
+  header h1{
+    font-family:'Fraunces',Georgia,serif;
+    font-optical-sizing:auto;font-weight:600;
+    font-variation-settings:'SOFT' 60,'WONK' 1;
+    font-size:clamp(2rem,6.4vw,3rem);line-height:1.02;
+    color:var(--thread);letter-spacing:.2px;
+    text-shadow:0 2px 0 rgba(0,0,0,.28);
+  }
+  header .subtitle{
+    font-size:.82rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--ochre);margin-top:.55rem;font-weight:700;
+  }
+  /* a short stitched rule under the title */
+  header::after{
+    content:"";display:block;width:132px;height:3px;margin:.85rem auto 0;
+    background:repeating-linear-gradient(90deg,var(--ochre) 0 11px,transparent 11px 20px);
+    opacity:.9;border-radius:2px;
+  }
+
+  /* ---------- the quilt block (story card) ---------- */
   .book{position:relative;z-index:1;width:min(680px,100%)}
   .page-card{
-    background:var(--page);
-    border-radius:22px;
-    border:3px solid var(--page-edge);
-    box-shadow:0 14px 40px rgba(0,0,0,.45), inset 0 0 60px rgba(214,190,140,.18);
+    position:relative;
+    background:var(--calico);
+    border-radius:8px;
+    /* indigo sashing frame + gold running-stitch inset */
+    border:12px solid var(--indigo);
+    box-shadow:
+      0 0 0 2px var(--indigo-ink),
+      inset 0 0 0 2px var(--ochre),
+      inset 0 0 0 4px var(--calico),
+      inset 0 0 0 5px var(--calico-edge),
+      var(--shadow);
     overflow:hidden;
-    transition:transform .35s ease,opacity .35s ease;
+    transition:transform .4s cubic-bezier(.2,.7,.3,1),opacity .4s ease;
   }
-  .page-card.turning{transform:perspective(900px) rotateY(-12deg) scale(.97);opacity:0}
+  /* running-stitch dashes riding the gold inset */
+  .page-card::before{
+    content:"";position:absolute;inset:2px;border-radius:4px;pointer-events:none;z-index:3;
+    border:2px dashed rgba(247,239,220,.72);
+    mix-blend-mode:screen;
+  }
+  .page-card.turning{transform:perspective(1100px) rotateY(-13deg) scale(.965);opacity:0}
 
+  /* top sashing rail = the datebar */
   .datebar{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:.7rem 1rem;background:var(--lantern);
-    border-bottom:3px solid var(--page-edge);
+    display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+    padding:.7rem .8rem;
+    background:
+      radial-gradient(circle at 50% -30%, rgba(255,255,255,.08), transparent 60%),
+      var(--indigo);
+    border-bottom:3px solid var(--ochre);
+    position:relative;
+  }
+  .datebar::after{
+    content:"";position:absolute;left:0;right:0;bottom:-3px;height:9px;
+    background:
+      linear-gradient(45deg,  var(--ochre) 48%, transparent 50%) 0 0/16px 100%,
+      linear-gradient(-45deg, var(--ochre) 48%, transparent 50%) 8px 0/16px 100%;
+    background-color:transparent;opacity:.9;
   }
   .datebar .today-label{
-    font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.15rem;color:#5A431A;
+    font-family:'Fraunces',Georgia,serif;font-weight:600;
+    font-variation-settings:'SOFT' 40;
+    font-size:1.02rem;color:var(--thread);letter-spacing:.3px;
   }
   .nav-btn{
-    font-family:'Fredoka',sans-serif;font-weight:600;font-size:1rem;
-    background:var(--page);color:var(--ink);
-    border:2px solid #D9B45E;border-radius:14px;
-    padding:.45rem .9rem;cursor:pointer;min-width:52px;min-height:44px;
+    font-size:1.05rem;line-height:1;
+    background:var(--calico-2);color:var(--indigo-deep);
+    border:2px solid var(--ochre);border-radius:50%;
+    width:46px;height:46px;min-width:46px;cursor:pointer;
+    box-shadow:0 2px 0 var(--ochre-deep);
+    transition:transform .12s ease,background .12s ease;
   }
-  .nav-btn:hover{background:#fff}
-  .nav-btn:focus-visible,button:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+  .nav-btn:hover{background:#fff;transform:translateY(-1px)}
+  .nav-btn:active{transform:translateY(1px);box-shadow:0 1px 0 var(--ochre-deep)}
+  .nav-btn:focus-visible,button:focus-visible,[tabindex]:focus-visible{
+    outline:3px solid var(--brick);outline-offset:2px
+  }
 
-  .scene{display:block;width:100%;height:auto;background:var(--sky-blue)}
+  /* illustration framed like an appliqué center panel */
+  #sceneHolder{padding:16px 16px 0}
+  .scene{
+    display:block;width:100%;height:auto;border-radius:5px;
+    background:#8FB8D8;
+    border:3px solid var(--calico-2);
+    box-shadow:0 0 0 2px var(--pine),0 6px 16px rgba(30,30,50,.22);
+  }
 
-  .story{padding:1.3rem 1.5rem 1.6rem}
+  /* ---------- the tale ---------- */
+  .story{padding:1.35rem 1.5rem 1.5rem}
   .story .kicker{
-    font-family:'Fredoka',sans-serif;font-weight:600;font-size:.85rem;
-    letter-spacing:.12em;text-transform:uppercase;color:var(--coral);
+    font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;
+    font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--brick);
   }
   .story h2{
-    font-family:'Fredoka',sans-serif;font-weight:700;
-    font-size:clamp(1.4rem,4vw,1.8rem);margin:.2rem 0 .8rem;line-height:1.15;
+    font-family:'Fraunces',Georgia,serif;font-optical-sizing:auto;
+    font-weight:600;font-variation-settings:'SOFT' 55,'WONK' 1;
+    font-size:clamp(1.55rem,4.6vw,2.1rem);line-height:1.12;
+    color:var(--ink);margin:.25rem 0 .85rem;
   }
-  .story p.tale{font-size:1.12rem;line-height:1.65}
+  .story p.tale{font-size:1.13rem;line-height:1.68;color:#3a2f22}
+  .story p.tale::first-letter{
+    font-family:'Fraunces',Georgia,serif;font-weight:600;
+    font-size:3.1rem;line-height:.8;float:left;
+    padding:.08em .12em 0 0;color:var(--brick);
+  }
 
-  .listen-row{display:flex;gap:.7rem;align-items:center;margin-top:1rem;flex-wrap:wrap}
+  .listen-row{display:flex;gap:.7rem;align-items:center;margin-top:1.15rem;flex-wrap:wrap}
   .listen-btn{
     display:inline-flex;align-items:center;gap:.5rem;
-    font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.05rem;
-    background:var(--sage);color:#fff;border:none;border-radius:16px;
-    padding:.65rem 1.2rem;cursor:pointer;min-height:48px;
-    box-shadow:0 3px 0 #5E8169;
+    font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;font-size:1.02rem;
+    background:var(--pine);color:var(--calico-2);border:none;border-radius:999px;
+    padding:.62rem 1.25rem;cursor:pointer;min-height:48px;
+    box-shadow:0 3px 0 var(--pine-deep);
+    transition:transform .12s ease;
   }
-  .listen-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #5E8169}
-  .voice-credit{font-size:.85rem;font-style:italic;color:#7A7190}
+  .listen-btn:hover{transform:translateY(-1px)}
+  .listen-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--pine-deep)}
+  .voice-credit{font-size:.85rem;font-style:italic;color:var(--ink-soft)}
 
+  /* "did you know" — a folded cloth pocket */
   .flap{
-    margin-top:1.2rem;border:none;width:100%;text-align:left;cursor:pointer;
-    background:#FBEFD3;border-radius:16px;padding:1rem 1.2rem;
-    border:2px dashed #D9B45E;font-family:inherit;
+    margin-top:1.25rem;width:100%;text-align:left;cursor:pointer;
+    background:
+      repeating-linear-gradient(45deg,rgba(220,160,51,.10) 0 8px,transparent 8px 16px),
+      #FBF0D4;
+    border:2px dashed var(--ochre-deep);border-radius:12px;
+    padding:1rem 1.15rem;font-family:inherit;
+    transition:background .15s ease;
   }
   .flap .flap-title{
-    font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.05rem;color:#8A6A1E;
-    display:flex;align-items:center;gap:.5rem;
+    font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.05rem;
+    color:var(--ochre-deep);display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;
   }
-  .flap .fact{display:none;margin-top:.6rem;font-size:1.02rem;line-height:1.55;color:var(--ink)}
+  .flap .fact{display:none;margin-top:.65rem;font-size:1.02rem;line-height:1.58;color:var(--ink)}
   .flap[aria-expanded="true"] .fact{display:block}
-  .flap[aria-expanded="true"]{background:#FFF4DB}
+  .flap[aria-expanded="true"]{background:#FFF6DE}
 
+  /* wonder — an indigo evening patch */
   .wonder{
-    margin-top:1rem;background:#E9F1FA;border-radius:16px;
-    padding:1rem 1.2rem;border-left:6px solid var(--sky-blue);
+    margin-top:1rem;background:
+      radial-gradient(circle at 88% 18%, rgba(243,230,196,.16), transparent 42%),
+      var(--indigo);
+    color:var(--calico-2);border-radius:12px;padding:1rem 1.2rem;
+    border-left:6px solid var(--ochre);
   }
-  .wonder .w-title{font-family:'Fredoka',sans-serif;font-weight:600;color:#3F6A8F;font-size:1rem}
-  .wonder p{margin-top:.35rem;font-size:1.02rem;line-height:1.5}
+  .wonder .w-title{font-family:'Fraunces',Georgia,serif;font-weight:600;color:var(--thread);font-size:1.02rem}
+  .wonder p{margin-top:.4rem;font-size:1.02rem;line-height:1.55;color:#E9E3D2}
 
-  /* virtue ribbon */
+  /* virtue — a sewn medallion patch */
   .virtue{
-    margin-top:1rem;display:flex;gap:.9rem;align-items:flex-start;
-    background:#F3EDFA;border-radius:16px;padding:1rem 1.2rem;
-    border-left:6px solid #9A7FBF;
+    margin-top:1rem;display:flex;gap:.9rem;align-items:center;
+    background:#F4ECF1;border-radius:12px;padding:1rem 1.2rem;
+    border-left:6px solid var(--plum);
   }
   .virtue .medal{
-    font-family:'Fredoka',sans-serif;font-weight:700;font-size:.95rem;
-    color:#fff;background:#9A7FBF;border-radius:999px;
-    padding:.4rem .95rem;white-space:nowrap;flex-shrink:0;
-    box-shadow:0 2px 0 #7A619B;
+    font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:.92rem;
+    color:var(--calico-2);
+    background:radial-gradient(circle at 35% 30%,#9A6683,var(--plum));
+    border-radius:999px;padding:.5rem 1.05rem;white-space:nowrap;flex-shrink:0;
+    box-shadow:0 2px 0 var(--plum-deep),inset 0 0 0 2px rgba(255,255,255,.35);
   }
-  .virtue p{font-size:1.02rem;line-height:1.5;color:var(--ink);align-self:center}
+  .virtue p{font-size:1.02rem;line-height:1.5;color:var(--ink)}
 
-  /* fold-out history card */
-  .deeper{margin-top:1.2rem}
+  /* deeper — aged "history cards" tucked in the block */
+  .deeper{margin-top:1.3rem}
   .deeper-head{
-    font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.05rem;
-    color:#6B4226;display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;
+    font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.08rem;
+    color:var(--brick-deep);display:flex;align-items:center;gap:.5rem;margin-bottom:.65rem;
   }
   .fold{
-    border:2px solid #D9C9A8;border-radius:14px;background:#FDF6E6;
+    border:2px solid var(--calico-edge);border-radius:10px;
+    background:linear-gradient(180deg,#FBF3E0,#F4E9CE);
     margin-bottom:.55rem;overflow:hidden;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.6);
   }
   .fold-btn{
-    width:100%;text-align:left;border:none;cursor:pointer;
-    background:transparent;padding:.85rem 1.1rem;
-    font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.02rem;color:var(--ink);
+    width:100%;text-align:left;border:none;cursor:pointer;background:transparent;
+    padding:.85rem 1.05rem;
+    font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.02rem;color:var(--ink);
     display:flex;justify-content:space-between;align-items:center;gap:.6rem;min-height:48px;
   }
-  .fold-btn .chev{transition:transform .25s ease;color:#B08A3E}
+  .fold-btn .chev{transition:transform .25s ease;color:var(--ochre-deep);font-size:.85rem}
   .fold.open .fold-btn .chev{transform:rotate(90deg)}
-  .fold-body{
-    display:none;padding:0 1.1rem 1rem;font-size:1rem;line-height:1.6;color:var(--ink);
-  }
+  .fold-body{display:none;padding:0 1.05rem 1rem;font-size:1rem;line-height:1.62;color:#3a2f22}
   .fold.open .fold-body{display:block}
-  .fold.open{background:#FFFBF0;border-color:#D9B45E}
+  .fold.open{background:linear-gradient(180deg,#FFFBEF,#F7EDD3);border-color:var(--ochre)}
 
+  /* the "visited" patch row */
   .stamp-row{
     display:flex;align-items:center;justify-content:space-between;
-    padding:0 1.5rem 1.3rem;flex-wrap:wrap;gap:.6rem;
+    padding:.2rem 1.5rem 1.35rem;flex-wrap:wrap;gap:.6rem;
   }
-  .stamp-note{font-size:.9rem;color:#7A7190}
+  .stamp-note{font-size:.9rem;color:var(--ink-soft)}
   .stamp{
-    font-family:'Fredoka',sans-serif;font-weight:600;font-size:.95rem;
-    color:var(--coral);border:2px solid var(--coral);border-radius:999px;
-    padding:.35rem .9rem;transform:rotate(-4deg);background:#fff;
+    font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:.9rem;
+    color:var(--brick);border:2px dashed var(--brick);border-radius:8px;
+    padding:.35rem .85rem;transform:rotate(-3deg);background:#fff;
+    box-shadow:1px 2px 0 rgba(176,74,54,.25);
   }
 
-  /* footer controls */
+  /* ---------- bottom controls ---------- */
   .controls{
     position:relative;z-index:1;width:min(680px,100%);
-    display:flex;justify-content:center;gap:.8rem;margin-top:1rem;flex-wrap:wrap;
+    display:flex;justify-content:center;gap:.8rem;margin-top:1.2rem;flex-wrap:wrap;
   }
   .pill{
-    font-family:'Fredoka',sans-serif;font-weight:600;font-size:1rem;
-    background:transparent;color:var(--page);
-    border:2px solid rgba(255,248,236,.5);border-radius:999px;
-    padding:.55rem 1.2rem;cursor:pointer;min-height:46px;
+    font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;font-size:.98rem;
+    background:rgba(247,239,220,.06);color:var(--thread);
+    border:2px solid rgba(220,160,51,.55);border-radius:999px;
+    padding:.6rem 1.25rem;cursor:pointer;min-height:46px;
+    transition:background .14s ease,border-color .14s ease,color .14s ease;
   }
-  .pill:hover{border-color:var(--lantern);color:var(--lantern)}
+  .pill:hover{background:var(--ochre);border-color:var(--ochre);color:var(--indigo-ink)}
 
-  /* calendar drawer */
+  /* ---------- dialogs ---------- */
   dialog{
-    border:none;border-radius:20px;background:var(--page);
-    width:min(560px,92vw);padding:1.4rem;margin:auto;
+    border:none;border-radius:10px;background:var(--calico);
+    border:10px solid var(--indigo);
+    box-shadow:inset 0 0 0 2px var(--ochre),inset 0 0 0 4px var(--calico),var(--shadow);
+    width:min(580px,92vw);padding:1.5rem 1.4rem;margin:auto;color:var(--ink);
   }
-  dialog::backdrop{background:rgba(20,22,45,.65)}
-  dialog h3{font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.3rem;margin-bottom:.8rem}
+  dialog::backdrop{background:rgba(18,22,44,.68);backdrop-filter:blur(2px)}
+  dialog h3{
+    font-family:'Fraunces',Georgia,serif;font-weight:600;
+    font-variation-settings:'SOFT' 50;font-size:1.45rem;
+    color:var(--brick-deep);margin-bottom:.9rem;
+  }
   .month-select{display:flex;gap:.5rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap}
   .month-select select{
-    font-family:'Fredoka',sans-serif;font-size:1rem;padding:.45rem .6rem;
-    border-radius:10px;border:2px solid var(--page-edge);background:#fff;
+    font-family:'Atkinson Hyperlegible',sans-serif;font-size:1rem;padding:.45rem .6rem;
+    border-radius:8px;border:2px solid var(--calico-edge);background:#fff;
   }
   .day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.35rem}
   .day-cell{
-    aspect-ratio:1;border-radius:10px;border:2px solid var(--page-edge);
-    background:#fff;font-family:'Fredoka',sans-serif;font-weight:500;
-    cursor:pointer;font-size:.95rem;position:relative;
+    aspect-ratio:1;border-radius:6px;border:2px solid var(--calico-edge);
+    background:#fff;font-family:'Fraunces',Georgia,serif;font-weight:500;
+    cursor:pointer;font-size:.95rem;position:relative;color:var(--ink);
   }
-  .day-cell.has-story{background:var(--lantern);border-color:#D9B45E;font-weight:700}
-  .day-cell.visited::after{
-    content:"★";position:absolute;top:1px;right:4px;font-size:.65rem;color:var(--coral);
-  }
-  .day-cell:hover{border-color:var(--coral)}
-  .legend{display:flex;gap:1.2rem;margin-top:.9rem;font-size:.85rem;color:#7A7190;flex-wrap:wrap}
+  .day-cell.has-story{background:var(--ochre);border-color:var(--ochre-deep);font-weight:700;color:var(--indigo-ink)}
+  .day-cell.visited::after{content:"\2726";position:absolute;top:1px;right:4px;font-size:.65rem;color:var(--brick)}
+  .day-cell:hover{border-color:var(--brick)}
+  .legend{display:flex;gap:1.2rem;margin-top:.9rem;font-size:.85rem;color:var(--ink-soft);flex-wrap:wrap}
   .legend .swatch{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:.3rem}
   .close-dialog{
-    margin-top:1rem;font-family:'Fredoka',sans-serif;font-weight:600;
-    background:var(--ink);color:#fff;border:none;border-radius:12px;
-    padding:.6rem 1.3rem;cursor:pointer;
+    margin-top:1.1rem;font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;
+    background:var(--indigo);color:var(--calico-2);border:none;border-radius:999px;
+    padding:.6rem 1.4rem;cursor:pointer;box-shadow:0 3px 0 var(--indigo-ink);
   }
+  .close-dialog:active{transform:translateY(2px);box-shadow:0 1px 0 var(--indigo-ink)}
 
-  /* stamps drawer */
+  /* stamps drawer — patches collected */
   .stamp-grid{display:flex;flex-wrap:wrap;gap:.6rem}
   .stamp-grid .stamp{transform:rotate(0)}
-  .empty-stamps{color:#7A7190;font-style:italic}
+  .empty-stamps{color:var(--ink-soft);font-style:italic}
 
-  /* story index */
-  #indexList{max-height:60vh;overflow-y:auto}
+  /* table of contents — "the whole quilt" */
+  #indexList{max-height:60vh;overflow-y:auto;padding-right:.3rem}
+  #indexList::-webkit-scrollbar{width:10px}
+  #indexList::-webkit-scrollbar-thumb{background:var(--calico-edge);border-radius:6px}
   .idx-month{
-    font-family:'Fredoka',sans-serif;font-weight:700;font-size:1rem;
-    color:#8A6A1E;margin:.9rem 0 .3rem;border-bottom:2px solid var(--page-edge);
-    padding-bottom:.2rem;
+    font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1rem;
+    color:var(--brick-deep);margin:1rem 0 .35rem;
+    border-bottom:2px dashed var(--calico-edge);padding-bottom:.25rem;
   }
   .idx-month:first-child{margin-top:0}
   .idx-entry{
     display:flex;gap:.7rem;align-items:baseline;width:100%;text-align:left;
-    background:transparent;border:none;cursor:pointer;padding:.45rem .3rem;
+    background:transparent;border:none;cursor:pointer;padding:.5rem .4rem;
     border-radius:8px;font-family:inherit;min-height:44px;
+    transition:background .12s ease;
   }
-  .idx-entry:hover{background:#FBEFD3}
-  .idx-date{font-family:'Fredoka',sans-serif;font-weight:600;color:var(--coral);min-width:56px;font-size:.95rem}
+  .idx-entry:hover{background:#FBF0D4}
+  .idx-date{font-family:'Fraunces',Georgia,serif;font-weight:600;color:var(--brick);min-width:56px;font-size:.95rem}
   .idx-title{font-size:1rem;color:var(--ink)}
-  .idx-entry .star{margin-left:auto;color:var(--lantern)}
-  .idx-count{font-size:.85rem;color:#7A7190;margin-bottom:.5rem}
+  .idx-entry .star{margin-left:auto;color:var(--ochre)}
+  .idx-count{font-size:.85rem;color:var(--ink-soft);margin-bottom:.5rem}
 
-  footer{position:relative;z-index:1;margin-top:1.6rem;color:rgba(255,248,236,.55);font-size:.8rem;text-align:center}
+  footer{
+    position:relative;z-index:1;margin-top:1.8rem;
+    color:rgba(243,230,196,.6);font-size:.8rem;text-align:center;letter-spacing:.04em;
+  }
 
-  /* ---- cover / landing screen ---- */
+  /* ---------- cover / landing ---------- */
   #cover{
     position:fixed;inset:0;z-index:10;
-    background:linear-gradient(180deg,var(--night-deep) 0%,var(--night) 55%,#33396B 100%);
+    background-color:var(--indigo-deep);
+    background-image:
+      repeating-linear-gradient(45deg, rgba(220,160,51,.06) 0 1px, transparent 1px 27px),
+      repeating-linear-gradient(-45deg, rgba(220,160,51,.06) 0 1px, transparent 1px 27px),
+      radial-gradient(900px 500px at 50% 0%, rgba(220,160,51,.14), transparent 66%),
+      linear-gradient(180deg,var(--indigo-ink),var(--indigo-deep));
     display:flex;align-items:center;justify-content:center;
-    padding:1.5rem;transition:opacity .5s ease;
+    padding:1.5rem;transition:opacity .55s ease;
   }
   #cover.closing{opacity:0;pointer-events:none}
   .cover-book{
-    width:min(440px,92vw);
-    background:linear-gradient(160deg,#8C3B33 0%,#A6473C 50%,#8C3B33 100%);
-    border-radius:14px 22px 22px 14px;
-    border-left:14px solid #6E2C26;
-    box-shadow:0 20px 60px rgba(0,0,0,.55), inset 0 0 0 3px rgba(245,192,78,.4);
-    padding:2.6rem 2rem 2.2rem;text-align:center;color:var(--page);
-    position:relative;
+    width:min(440px,92vw);position:relative;
+    background:var(--calico);
+    border:14px solid var(--indigo);
+    border-radius:8px;
+    box-shadow:
+      0 0 0 2px var(--indigo-ink),
+      inset 0 0 0 2px var(--ochre),
+      inset 0 0 0 5px var(--calico),
+      inset 0 0 0 6px var(--calico-edge),
+      0 26px 66px rgba(0,0,0,.55);
+    padding:2.4rem 1.9rem 2.1rem;text-align:center;color:var(--ink);
   }
+  /* running stitch just inside the gold */
   .cover-book::before{
-    content:"";position:absolute;inset:14px;
-    border:2px solid rgba(245,192,78,.55);border-radius:10px;pointer-events:none;
+    content:"";position:absolute;inset:3px;border-radius:4px;pointer-events:none;
+    border:2px dashed rgba(50,66,114,.5);
   }
   .cover-kicker{
-    font-family:'Fredoka',sans-serif;font-weight:500;font-size:.85rem;
-    letter-spacing:.18em;text-transform:uppercase;color:#F0D9A0;
+    font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;
+    font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--brick);
   }
   .cover-book h2{
-    font-family:'Fredoka',sans-serif;font-weight:700;
-    font-size:clamp(2rem,7vw,2.7rem);color:var(--lantern);
-    line-height:1.1;margin:.5rem 0 .3rem;text-shadow:0 2px 0 rgba(0,0,0,.3);
+    font-family:'Fraunces',Georgia,serif;font-optical-sizing:auto;font-weight:600;
+    font-variation-settings:'SOFT' 60,'WONK' 1;
+    font-size:clamp(2.1rem,7.4vw,2.9rem);color:var(--ink);
+    line-height:1.05;margin:.45rem 0 .35rem;
   }
-  .cover-sub{font-size:1rem;color:#F5E9D0;font-style:italic;margin-bottom:1.4rem}
-  .cover-scene{width:100%;border-radius:10px;border:3px solid rgba(245,192,78,.5);display:block;margin-bottom:1.5rem}
+  .cover-sub{font-size:1rem;color:var(--ink-soft);font-style:italic;margin-bottom:1.35rem}
+  .cover-scene{
+    width:100%;border-radius:6px;border:3px solid var(--calico-2);
+    box-shadow:0 0 0 2px var(--pine),0 6px 16px rgba(30,30,50,.28);
+    display:block;margin-bottom:1.4rem;
+  }
   .open-book-btn{
-    font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.25rem;
-    background:var(--lantern);color:#5A431A;border:none;border-radius:18px;
-    padding:.85rem 2.2rem;cursor:pointer;min-height:54px;
-    box-shadow:0 4px 0 #C29538;
+    font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;font-size:1.18rem;
+    background:var(--brick);color:var(--calico-2);border:none;border-radius:999px;
+    padding:.82rem 2.1rem;cursor:pointer;min-height:54px;
+    box-shadow:0 4px 0 var(--brick-deep);
+    transition:transform .12s ease;
   }
-  .open-book-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #C29538}
-  .cover-note{margin-top:1rem;font-size:.85rem;color:#E8D7B0}
+  .open-book-btn:hover{transform:translateY(-1px)}
+  .open-book-btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--brick-deep)}
+  .cover-note{margin-top:1rem;font-size:.85rem;color:var(--ink-soft)}
 </style>
 </head>
 <body>
